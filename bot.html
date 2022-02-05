@@ -1,0 +1,116 @@
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * { padding: 0; margin: 0; }
+        html, body, #chat {
+            min-height: 100% !important;
+            height: 100%;
+        }
+
+        body{
+            background-color: white;
+        }   
+
+        .collection, .collection-item {
+          border: none!important;
+      }
+
+      .rowButton{
+          margin:5px;
+      }
+
+      ::-webkit-scrollbar {
+        width: 5px;
+        right:5px;
+        position:absolute;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+        background:#FEF0FF;
+        border-radius:10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="chat">
+        <div class=" center center-align">
+            <ul class="collection">
+            </ul>
+        </div>
+    </div>
+</body>
+<script
+  src="https://code.jquery.com/jquery-3.6.0.min.js"
+  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+  crossorigin="anonymous"></script>
+<script>
+
+$(document).ready(function() {
+    drawFlow("context0");
+});
+
+var flow = {
+    "context0":{
+        "options":[
+            {"lbl":"Sim","next":"context1","class":"pulse blue lighten-1"},
+            {"lbl":"Não","next":"context2","class":"red lighten-1"},
+        ],
+        "messages":["Temos uma opção imperdível","Deseja conferir? 😊"]
+    },
+    "context1":{
+        "messages":["Ótimo, vá para o carrinho de compras e confira seu cupom de desconto"]     
+    },
+    "context2":{
+        "options":[
+            {"lbl":"Oi","next":"context0","class":"pulse blue lighten-1"},
+        ],
+        "messages":["Ah que pena","Qualquer coisa, é só mandar um 'oi'"]
+    },
+}
+
+function drawFlow(context){
+    let actualContext = flow[context];
+    let msgs = '';
+    let options = '';
+
+    if(actualContext != undefined){
+        if(actualContext.hasOwnProperty('messages')){
+            actualContext.messages.forEach(function(valor){
+                msgs += `<div class="col s12"><span class="flow-text">${valor}</span></div>`;
+            });
+        }
+        if(actualContext.hasOwnProperty('options')){
+            actualContext.options.forEach(function(valor){
+                options += `<div class="rowButton"><a class="waves-effect waves-light btn-small ${valor.class}" onclick="drawFlow('${valor.next}')">${valor.lbl}</a></div>`;
+            });
+        }
+    }
+
+    let elem = `<li class="collection-item avatar">
+                    <img src="https://w7.pngwing.com/pngs/1001/63/png-transparent-internet-bot-computer-icons-chatbot-sticker-electronics-face-careobot-thumbnail.png" alt="" class="circle">
+                    <div class="row">
+                        ${msgs}
+                    </div>
+                    <div class="row">
+                        ${options}
+                    </div>
+                </li>
+                `;
+
+    let img = `<li class="collection-item avatar typing"><img  width="50px" src="https://support.signal.org/hc/article_attachments/360016877511/typing-animation-3x.gif"></li>`;
+    $(".collection").append(img);
+
+    var audio = new Audio('https://theboss-upload.s3.amazonaws.com/notification/240943__htn4ever__notif-1.mp3');
+    setTimeout(function() { 
+        $('.typing').remove();
+        $('.rowButton').remove();
+        $(".collection").append(elem);
+        $("html, body").animate({ scrollTop: $(document).height() }, 1200);
+        audio.play();
+    }, 3000);
+}
+</script>
+</html>
